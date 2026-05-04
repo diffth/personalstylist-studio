@@ -47,54 +47,12 @@ function App() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
     setReport(null);
 
-    const data = new FormData();
-    data.append('photo', formData.photo);
-    data.append('height', formData.height);
-    data.append('weight', formData.weight);
-
-    try {
-      const response = await fetch('/api/consult', {
-        method: 'POST',
-        body: data,
-      });
-
-      // 응답 상태 확인
-      if (!response.ok) {
-        const errorText = await response.text();
-        let errorMessage = '분석 중 오류가 발생했습니다.';
-        try {
-          const errorJson = JSON.parse(errorText);
-          errorMessage = errorJson.error || errorMessage;
-        } catch (e) {
-          errorMessage = `서버 에러 (${response.status}): API 서버가 준비되지 않았을 수 있습니다.`;
-        }
-        throw new Error(errorMessage);
-      }
-
-      // Content-Type 확인
-      const contentType = response.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("서버로부터 올바른 응답(JSON)을 받지 못했습니다. 로컬 환경에서는 API 기능이 제한될 수 있습니다.");
-      }
-
-      const result = await response.json();
-      setReport(result.report);
-    } catch (error) {
-      console.error('Error details:', error);
-      alert(`알림: ${error.message}\n\n참고: 현재 로컬 개발 환경(Codespaces)에서는 API 기능 실행이 제한될 수 있습니다. 이 경우 실제 배포된 URL에서 확인해 주세요.`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleMockSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
+    // 가상의 지연 시간을 주어 분석하는 느낌을 줍니다.
     setTimeout(() => {
       const mockReport = `## 🌟 퍼스널 스타일 컨설팅 보고서
 
@@ -117,7 +75,7 @@ function App() {
 **스타일리스트 한마디**: "고객님은 기본에 충실한 아이템만으로도 충분히 멋진 스타일을 완성할 수 있는 체형입니다. 자신감을 갖고 시도해 보세요!"`;
       setReport(mockReport);
       setLoading(false);
-    }, 1500);
+    }, 2000);
   };
 
   const renderReport = (text) => {
@@ -206,10 +164,7 @@ function App() {
 
               <div className="button-group">
                 <button type="submit" className="submit-button" disabled={loading}>
-                  {loading ? 'Gemini 분석 중...' : '실제 AI 분석 시작'}
-                </button>
-                <button type="button" className="mock-button" onClick={handleMockSubmit} disabled={loading}>
-                  결과 화면 미리보기 (Mock)
+                  {loading ? 'Gemini 분석 중...' : 'AI 분석 시작'}
                 </button>
               </div>
             </form>
