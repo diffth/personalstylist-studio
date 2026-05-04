@@ -11,23 +11,27 @@ export async function onRequestPost(context) {
     const apiKey = env.GOOGLE_API_KEY;
 
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: "Google API key not configured in Cloudflare environment" }), {
+      return new Response(JSON.stringify({ 
+        error: "Google API key가 설정되지 않았습니다. Cloudflare Pages 설정에서 GOOGLE_API_KEY 환경 변수를 확인하고 'Redeploy' 해주세요." 
+      }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    // 사진 데이터를 Base64로 변환
+    // 사진 데이터를 Base64로 변환 (안전한 방식)
     const arrayBuffer = await photo.arrayBuffer();
-    const base64Image = btoa(
-      new Uint8Array(arrayBuffer).reduce(
-        (data, byte) => data + String.fromCharCode(byte),
-        ''
-      )
-    );
+    const uint8Array = new Uint8Array(arrayBuffer);
+    let binary = '';
+    for (let i = 0; i < uint8Array.byteLength; i++) {
+        binary += String.fromCharCode(uint8Array[i]);
+    }
+    const base64Image = btoa(binary);
 
-    // Google Gemini API 호출 (Generative Language API)
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    // Google Gemini API 호출
+    const apiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    
+    const response = await fetch(apiEndpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -69,7 +73,13 @@ export async function onRequestPost(context) {
     const result = await response.json();
 
     if (result.error) {
-      throw new Error(result.error.message);
+      return new Response(JSON.stringify({ 
+        error: `Gemini API 에러: ${result.error.message}`,
+        details: result.error
+      }), {
+        status: response.status,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     // Gemini 응답 구조에서 텍스트 추출
