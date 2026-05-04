@@ -1,5 +1,4 @@
 name = "personalstylist-studio"
 pages_build_output_dir = "dist"
 
-[vars]
-GOOGLE_API_KEY = "AIzaSyAhs7grP4iUjXus5ni6CkDig9M2P-obsnU"
+# 환경 변수는 Cloudflare 대시보드에서 직접 설정하는 것을 권장합니다.

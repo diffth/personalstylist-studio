@@ -7,11 +7,11 @@ export async function onRequestPost(context) {
     const weight = formData.get('weight');
     const photo = formData.get('photo');
 
-    // Google API Key 확인 (환경 변수 또는 직접 입력된 키)
-    const apiKey = env.GOOGLE_API_KEY || "AIzaSyAhs7grP4iUjXus5ni6CkDig9M2P-obsnU";
+    // Google API Key 확인 (환경 변수 사용)
+    const apiKey = env.GOOGLE_API_KEY;
 
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: "Google API key not configured" }), {
+      return new Response(JSON.stringify({ error: "Google API key not configured in Cloudflare environment" }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
