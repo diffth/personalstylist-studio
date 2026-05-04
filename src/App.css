@@ -82,8 +82,9 @@ input[type="number"]:focus {
 }
 
 .photo-preview-container {
-  width: 200px;
-  height: 250px;
+  width: 100%;
+  max-width: 300px;
+  height: 350px;
   border: 2px dashed #cbd5e0;
   border-radius: 12px;
   display: flex;
@@ -92,18 +93,32 @@ input[type="number"]:focus {
   overflow: hidden;
   margin-bottom: 10px;
   background-color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.photo-preview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.photo-preview-container:hover {
+  border-color: #3498db;
+  background-color: #f0f7ff;
+}
+
+.photo-preview-container.dragging {
+  border-color: #3498db;
+  background-color: #e1effe;
+  transform: scale(1.02);
+}
+
+.upload-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  display: block;
 }
 
 .photo-placeholder {
-  color: #94a3b8;
-  font-size: 0.85rem;
+  color: #64748b;
+  font-size: 0.95rem;
   text-align: center;
+  padding: 20px;
 }
 
 .submit-button {
