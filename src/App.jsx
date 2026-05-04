@@ -40,15 +40,16 @@ function App() {
         body: data,
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error('분석 중 오류가 발생했습니다.');
+        throw new Error(result.error || '분석 중 오류가 발생했습니다.');
       }
 
-      const result = await response.json();
-      setReport(result.choices[0].message.content);
+      setReport(result.report);
     } catch (error) {
       console.error(error);
-      alert('스타일 분석을 가져오는 데 실패했습니다. 다시 시도해 주세요.');
+      alert(`에러: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -60,7 +61,7 @@ function App() {
         {!report ? (
           <div className="container">
             <h1 className="title">Personal Stylist Studio</h1>
-            <p className="subtitle">당신만의 완벽한 스타일을 찾아드립니다.</p>
+            <p className="subtitle">Gemini AI가 당신만의 스타일을 찾아드립니다.</p>
 
             <form className="style-form" onSubmit={handleSubmit}>
               <div className="input-group photo-upload">
@@ -112,7 +113,7 @@ function App() {
               </div>
 
               <button type="submit" className="submit-button" disabled={loading}>
-                {loading ? '스타일 분석 중...' : '스타일 분석 시작하기'}
+                {loading ? 'Gemini 분석 중...' : '스타일 분석 시작하기'}
               </button>
             </form>
           </div>
