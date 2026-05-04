@@ -1,0 +1,5 @@
+name = "personalstylist-studio"
+pages_build_output_dir = "dist"
+
+[vars]
+GOOGLE_API_KEY = "AIzaSyBlYwW1zDk0c1teQ2UtkLyUY4ZwU9xgnmU"
