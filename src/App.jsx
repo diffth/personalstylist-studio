@@ -10,13 +10,36 @@ function App() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleFile = (file) => {
+    if (file && file.type.startsWith('image/')) {
+      setFormData({ ...formData, photo: file });
+      setPreviewUrl(URL.createObjectURL(file));
+    } else {
+      alert('이미지 파일만 업로드 가능합니다.');
+    }
+  };
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setFormData({ ...formData, photo: file });
-      setPreviewUrl(URL.createObjectURL(file));
-    }
+    handleFile(file);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    handleFile(file);
   };
 
   const handleChange = (e) => {
@@ -128,12 +151,19 @@ function App() {
             <form className="style-form" onSubmit={handleSubmit}>
               <div className="input-group photo-upload">
                 <label htmlFor="photo">전신 사진 업로드</label>
-                <div className="photo-preview-container">
+                <div 
+                  className={`photo-preview-container ${isDragging ? 'dragging' : ''}`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={() => document.getElementById('photo').click()}
+                >
                   {previewUrl ? (
                     <img src={previewUrl} alt="Preview" className="photo-preview" />
                   ) : (
                     <div className="photo-placeholder">
-                      <span>사진을 선택해주세요</span>
+                      <span className="upload-icon">📸</span>
+                      <span>사진을 드래그하거나 클릭하여 선택하세요</span>
                     </div>
                   )}
                 </div>
@@ -143,9 +173,9 @@ function App() {
                   accept="image/*"
                   onChange={handlePhotoChange}
                   required
+                  style={{ display: 'none' }}
                 />
               </div>
-
               <div className="input-row">
                 <div className="input-group">
                   <label htmlFor="height">키 (cm)</label>
