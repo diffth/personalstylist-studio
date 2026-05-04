@@ -8,7 +8,7 @@ export async function onRequestPost(context) {
     const photo = formData.get('photo');
 
     // Google API Key 확인 (환경 변수 또는 직접 입력된 키)
-    const apiKey = env.GOOGLE_API_KEY || "AIzaSyBlYwW1zDk0c1teQ2UtkLyUY4ZwU9xgnmU";
+    const apiKey = env.GOOGLE_API_KEY || "AIzaSyAhs7grP4iUjXus5ni6CkDig9M2P-obsnU";
 
     if (!apiKey) {
       return new Response(JSON.stringify({ error: "Google API key not configured" }), {
