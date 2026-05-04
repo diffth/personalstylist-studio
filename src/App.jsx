@@ -40,16 +40,30 @@ function App() {
         body: data,
       });
 
-      const result = await response.json();
-
+      // 응답 상태 확인
       if (!response.ok) {
-        throw new Error(result.error || '분석 중 오류가 발생했습니다.');
+        const errorText = await response.text();
+        let errorMessage = '분석 중 오류가 발생했습니다.';
+        try {
+          const errorJson = JSON.parse(errorText);
+          errorMessage = errorJson.error || errorMessage;
+        } catch (e) {
+          errorMessage = `서버 에러 (${response.status}): API 서버가 준비되지 않았을 수 있습니다.`;
+        }
+        throw new Error(errorMessage);
       }
 
+      // Content-Type 확인
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("서버로부터 올바른 응답(JSON)을 받지 못했습니다. 로컬 환경에서는 API 기능이 제한될 수 있습니다.");
+      }
+
+      const result = await response.json();
       setReport(result.report);
     } catch (error) {
-      console.error(error);
-      alert(`에러: ${error.message}`);
+      console.error('Error details:', error);
+      alert(`알림: ${error.message}\n\n참고: 현재 로컬 개발 환경(Codespaces)에서는 API 기능 실행이 제한될 수 있습니다. 이 경우 실제 배포된 URL에서 확인해 주세요.`);
     } finally {
       setLoading(false);
     }
